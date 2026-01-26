@@ -3,7 +3,7 @@
 locals {
   # image is region-local. If you changed region, please also change image.
   # AMIs of each region (Ubuntu 22.04 + OMZ + KernelTunes):
-  # us-east-1	ami-0e2732470fc684140
+  # us-east-1	ami-0c398cb65a93047f2
   # us-east-2	ami-05cda54fbc39e2381
   # us-west-1	ami-0575bfdeb6f59b5d8
   # us-west-2	ami-003e5556ddc999e13
