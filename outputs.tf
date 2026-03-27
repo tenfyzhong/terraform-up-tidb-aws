@@ -22,6 +22,10 @@ output "private-ip-tiflash" {
   value = local.tiflash_private_ips
 }
 
+output "private-ip-ticdc" {
+  value = local.ticdc_private_ips
+}
+
 output "private-ip-pd" {
   value = local.pd_private_ip
 }
