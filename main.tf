@@ -24,11 +24,12 @@ resource "aws_key_pair" "master_key" {
 }
 
 locals {
-  pd_private_ip = "172.31.8.1"
-  tidb_private_ips = [for i in range(local.n_tidb) : "172.31.7.${i + 1}"]
-  tikv_private_ips = [for i in range(local.n_tikv) : "172.31.6.${i + 1}"]
+  pd_private_ip       = "172.31.8.1"
+  tidb_private_ips    = [for i in range(local.n_tidb) : "172.31.7.${i + 1}"]
+  tikv_private_ips    = [for i in range(local.n_tikv) : "172.31.6.${i + 1}"]
   tiflash_private_ips = [for i in range(local.n_tiflash) : "172.31.9.${i + 1}"]
-  center_private_ip = "172.31.1.1"
+  ticdc_private_ips   = [for i in range(local.n_ticdc) : "172.31.10.${i + 1}"]
+  center_private_ip   = "172.31.1.1"
 }
 
 resource "aws_instance" "tidb" {
@@ -132,6 +133,33 @@ resource "aws_instance" "tiflash" {
 
   tags = {
     Name = "${local.namespace}-tiflash-write-${count.index}"
+  }
+
+  user_data_base64 = data.cloudinit_config.common_server.rendered
+}
+
+resource "aws_instance" "ticdc" {
+  count = local.n_ticdc
+
+  ami                         = local.image
+  instance_type               = local.ticdc_instance
+  key_name                    = aws_key_pair.master_key.id
+  vpc_security_group_ids      = [aws_security_group.ssh.id]
+  iam_instance_profile        = aws_iam_instance_profile.ec2_profile.name
+  subnet_id                   = aws_subnet.main.id
+  associate_public_ip_address = true
+  private_ip                  = local.ticdc_private_ips[count.index]
+
+  root_block_device {
+    volume_size           = 100
+    delete_on_termination = true
+    volume_type           = "gp3"
+    iops                  = 3000
+    throughput            = 125
+  }
+
+  tags = {
+    Name = "${local.namespace}-ticdc-${count.index}"
   }
 
   user_data_base64 = data.cloudinit_config.common_server.rendered

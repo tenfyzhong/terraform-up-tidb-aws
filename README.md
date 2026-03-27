@@ -7,7 +7,8 @@ A sample to create VMs for deploying TiDB in AWS using [Terraform](https://www.t
 | TiKV                                        | 8c 64g | 3     | 172.31.6.1, 172.31.6.2, ... |
 | TiDB                                        | 8c 16g | 2     | 172.31.7.1, 172.31.7.2, ... |
 | PD + Grafana + Monitoring                   | 8c 16g | 1     | 172.31.8.1                  |
-| TiFlash                                     | 8c 64g | 0     | 172.31.9.1, 172.31.9.2, ... |
+| TiFlash                                     | 8c 64g | 1     | 172.31.9.1, 172.31.9.2, ... |
+| TiCDC                                       | 8c 16g | 0     | 172.31.10.1, 172.31.10.2, ... |
 | Center VM, you can run benchmarks and so on | 8c 16g | 1     | 172.31.1.1                  |
 
 The topology and instance size can be customized via [`locals_common.tf`](./locals_common.tf) and [`locals_advanced.tf`](./locals_advanced.tf).
@@ -35,16 +36,17 @@ terraform init
 
 ### 2. Optional: Configure
 
-Customize the number of TiDB and TiKV VMs in [`locals_common.tf`](./locals_common.tf).
+Customize the number of TiDB, TiKV, TiFlash, and TiCDC VMs in [`locals_common.tf`](./locals_common.tf).
 
 **Example:**
 
 ```terraform
 locals {
-  name      = "foo-benchmark"
+  namespace = "foo-benchmark"
   n_tidb    = 1  # default 2
   n_tikv    = 3  # default 3
-  n_tiflash = 0  # default 0
+  n_tiflash = 1  # default 1
+  n_ticdc   = 1  # default 0
 }
 ```
 
@@ -64,14 +66,18 @@ private-ip-tidb = [
   "172.31.7.1",
   "172.31.7.2",
 ]
-private-ip-tiflash = []
+private-ip-tiflash = [
+  "172.31.9.1",
+]
+private-ip-ticdc = []
 private-ip-tikv = [
   "172.31.6.1",
   "172.31.6.2",
   "172.31.6.3",
 ]
 ssh-center = "ssh ubuntu@<center_vm_ip>"
-tidb-dashboard = "http://<pd_vm_ip>:2379/dashboard"
+url-grafana = "http://<pd_vm_ip>:3000"
+url-tidb-dashboard = "http://<pd_vm_ip>:2379/dashboard"
 ```
 
 ### 4. Connect to Center VM and deploy cluster
@@ -119,5 +125,6 @@ terraform destroy -auto-approve
 | ✅     | With zsh                                    |
 | ✅     | TiDB recommended kernal parameters          |
 | ✅     | Support TiFlash                             |
+| ✅     | Support TiCDC                               |
 | ✅     | Instance size is identical with TiDB Cloud  |
 | ✅     | EC2 IAM Profile to access S3 without AK, SK |
