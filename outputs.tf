@@ -26,6 +26,10 @@ output "private-ip-ticdc" {
   value = local.ticdc_private_ips
 }
 
+output "private-ip-tidb2dw" {
+  value = local.tidb2dw_private_ips
+}
+
 output "private-ip-pd" {
   value = local.pd_private_ip
 }

@@ -16,6 +16,7 @@ locals {
   pd_instance      = "c5.2xlarge"
   tiflash_instance = "r5.2xlarge"
   ticdc_instance   = "c5.2xlarge"
+  tidb2dw_instance   = "c5.2xlarge"
   center_instance  = "c5.2xlarge"
 
   master_ssh_key         = "./master_key"

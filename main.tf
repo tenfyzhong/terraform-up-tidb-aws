@@ -29,6 +29,7 @@ locals {
   tikv_private_ips    = [for i in range(local.n_tikv) : "172.31.6.${i + 1}"]
   tiflash_private_ips = [for i in range(local.n_tiflash) : "172.31.9.${i + 1}"]
   ticdc_private_ips   = [for i in range(local.n_ticdc) : "172.31.10.${i + 1}"]
+  tidb2dw_private_ips   = [for i in range(local.n_tidb2dw) : "172.31.11.${i + 1}"]
   center_private_ip   = "172.31.1.1"
 }
 
